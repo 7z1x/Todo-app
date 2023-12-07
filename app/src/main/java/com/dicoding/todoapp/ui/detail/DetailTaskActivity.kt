@@ -30,6 +30,7 @@ class DetailTaskActivity : AppCompatActivity() {
 
         val factory = ViewModelFactory.getInstance(this)
         viewModel = ViewModelProvider(this, factory)[DetailTaskViewModel::class.java]
+
         viewModel.apply {
             setTaskId(taskId)
             task.observe(this@DetailTaskActivity) {

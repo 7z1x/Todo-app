@@ -41,12 +41,12 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
             R.id.action_save -> {
                 //TODO 12 : Create AddTaskViewModel and insert new task to database
                 val edtTitle = findViewById<TextInputEditText>(R.id.add_ed_title)
-                val edtDesc = findViewById<TextInputEditText>(R.id.add_ed_description)
+                val edtDescription = findViewById<TextInputEditText>(R.id.add_ed_description)
                 val title = edtTitle.text.toString()
-                val desc = edtDesc.text.toString()
+                val desc = edtDescription.text.toString()
 
-                val newTask = Task(0, title, desc, dueDateMillis, false)
-                viewModel.addData(newTask)
+                val addNewTask = Task(0, title, desc, dueDateMillis, false)
+                viewModel.addData(addNewTask)
                 onBackPressedDispatcher.onBackPressed()
                 true
             }
