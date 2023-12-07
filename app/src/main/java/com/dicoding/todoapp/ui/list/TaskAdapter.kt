@@ -39,10 +39,14 @@ class TaskAdapter(
             task.dueDateMillis < System.currentTimeMillis() -> {
                 //OVERDUE
                 holder.cbComplete.isChecked = false
+                val title = TaskTitleView.OVERDUE
+                holder.tvTitle.state = title
             }
             else -> {
                 //NORMAL
                 holder.cbComplete.isChecked = false
+                val title = TaskTitleView.NORMAL
+                holder.tvTitle.state = title
             }
         }
     }
@@ -67,7 +71,6 @@ class TaskAdapter(
                 onCheckedChange(task, !task.isCompleted)
             }
         }
-
     }
 
     companion object {
@@ -81,7 +84,5 @@ class TaskAdapter(
                 return oldItem == newItem
             }
         }
-
     }
-
 }

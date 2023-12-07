@@ -1,11 +1,14 @@
 package com.dicoding.todoapp.setting
 
-import android.Manifest
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import androidx.work.Data
@@ -32,6 +35,7 @@ class SettingsActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
@@ -43,15 +47,16 @@ class SettingsActivity : AppCompatActivity() {
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        requestPermissionLauncher.launch(POST_NOTIFICATIONS)
     }
+
 
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
             val prefNotification = findPreference<SwitchPreference>(getString(R.string.pref_key_notify))
-            prefNotification?.setOnPreferenceChangeListener { preference, newValue ->
+            prefNotification?.setOnPreferenceChangeListener { _, newValue ->
                 val channelName = getString(R.string.notify_channel_name)
                 //TODO 13 : Schedule and cancel daily reminder using WorkManager with data channelName
                 val workManager = WorkManager.getInstance(requireContext())
@@ -61,6 +66,16 @@ class SettingsActivity : AppCompatActivity() {
                     val data = Data.Builder().putString(NOTIFICATION_CHANNEL_ID, channelName).build()
                     oneTimeWorkRequest = OneTimeWorkRequest.Builder(NotificationWorker::class.java).setInputData(data).build()
                     workManager.enqueue(oneTimeWorkRequest)
+                }
+                true
+            }
+
+            val prefTheme = findPreference<ListPreference>(getString(R.string.pref_key_dark))
+            prefTheme?.setOnPreferenceChangeListener { _, newValue ->
+                when (newValue.toString()) {
+                    getString(R.string.pref_dark_on) -> updateTheme(AppCompatDelegate.MODE_NIGHT_YES)
+                    getString(R.string.pref_dark_off) -> updateTheme(AppCompatDelegate.MODE_NIGHT_NO)
+                    getString(R.string.pref_dark_auto) -> updateTheme(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                 }
                 true
             }
